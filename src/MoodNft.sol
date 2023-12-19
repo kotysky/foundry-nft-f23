@@ -1,3 +1,24 @@
+// Layout of Contract:
+// version
+// imports
+// errors
+// interfaces, libraries, contracts
+// Type declarations
+// State variables
+// Events
+// Modifiers
+// Functions
+
+// Layout of Functions:
+// constructor
+// receive function (if exists)
+// fallback function (if exists)
+// external
+// public
+// internal
+// private
+// view & pure functions
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
@@ -7,6 +28,7 @@ import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 contract MoodNft is ERC721 {
     //Errors
     error MoodNft__CantFlipMoodIfNotOwner();
+
     uint256 private s_tokenCounter;
     string private s_happySvgImageUri;
     string private s_sadSvgImageUri;
@@ -37,9 +59,21 @@ contract MoodNft is ERC721 {
     }
 
     function flipMood(uint256 tokenId) public {
-        //function from erc721
-        if (!_isApprovedOrOwner(msg.sender, tokenId)) {
+        //functions getApproved() and ownerOf() from erc721
+        if (
+            getApproved(tokenId) != msg.sender && ownerOf(tokenId) != msg.sender
+        ) {
             revert MoodNft__CantFlipMoodIfNotOwner();
+        }
+
+        /*if (!_isApprovedOrOwner(msg.sender, tokenId)) {
+            revert MoodNft__CantFlipMoodIfNotOwner();
+        }*/
+
+        if (s_tokenIdToMood[tokenId] == Mood.Happy) {
+            s_tokenIdToMood[tokenId] = Mood.Sad;
+        } else {
+            s_tokenIdToMood[tokenId] = Mood.Happy;
         }
     }
 
